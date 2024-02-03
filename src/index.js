@@ -21,7 +21,7 @@ let interval;
 let isRunning = false;
 
 /**
- * Class Node를 스위칭하는 함수
+ * Class Node를 스위칭합니다.
  * @param {HTMLElement} targetElement
  * @param {string} toRemove
  * @param {string} toAdd
@@ -50,6 +50,10 @@ $startStopBtn.addEventListener('click', () => {
 });
 
 // 2. 시간 포맷팅 구현
+/**
+ * 센티초를 [HH]:MM:SS.cc 형태로 포맷팅하여 리턴합니다.
+ * @param {number} centisecond
+ */
 const formatCentisecond = (centisecond) => {
   let hour = parseInt(centisecond / 360000);
   let minute = String(parseInt(centisecond / 6000)).padStart(2, 0);
@@ -63,17 +67,44 @@ const formatCentisecond = (centisecond) => {
 
 // 3. 랩 기능 구현
 // 4. 리셋 기능
+// 6. 최단, 최장 기록 강조 효과
 const $laps = document.getElementById('laps');
 
 let laps = [];
+
+let [longestIndex, longestLap] = [0, -1];
+let [shortestIndex, shortestLap] = [0, -1];
 
 $lapResetBtn.addEventListener('click', () => {
   if (isRunning) {
     laps.push(stopWatch.createLap());
     $laps.innerText = '';
 
+    const [currentIndex, currentLap] = laps[laps.length - 1];
+
+    if (longestLap === -1) {
+      [longestIndex, longestLap] = [currentIndex, currentLap];
+    } else {
+      [longestIndex, longestLap] =
+        longestLap < currentLap
+          ? [currentIndex, currentLap]
+          : [longestIndex, longestLap];
+    }
+
+    if (shortestLap === -1) {
+      [shortestIndex, shortestLap] = [currentIndex, currentLap];
+    } else {
+      [shortestIndex, shortestLap] =
+        shortestLap > currentLap
+          ? [currentIndex, currentLap]
+          : [shortestIndex, shortestLap];
+    }
+
     for (let i = laps.length - 1; i >= 0; i--) {
       const [lapCount, centisecond] = laps[i];
+      const isLongest = i === longestIndex - 1;
+      const isShortest = i === shortestIndex - 1;
+
       const $lap = document.createElement('li');
       const $span1 = document.createElement('span');
       const $span2 = document.createElement('span');
@@ -81,7 +112,9 @@ $lapResetBtn.addEventListener('click', () => {
       $lap.appendChild($span1);
       $lap.appendChild($span2);
 
-      $lap.classList.value = 'flex justify-between py-2 px-3 border-b-2';
+      $lap.classList.value = `flex justify-between py-2 px-3 border-b-2 ${
+        isLongest && 'text-red-600'
+      } ${isShortest && 'text-green-600'}`;
       $span1.innerText = `랩 ${lapCount}`;
       $span2.innerText = formatCentisecond(centisecond);
 
