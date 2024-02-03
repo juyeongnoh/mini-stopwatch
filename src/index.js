@@ -62,6 +62,7 @@ const formatCentisecond = (centisecond) => {
 };
 
 // 3. 랩 기능 구현
+// 4. 리셋 기능
 const $laps = document.getElementById('laps');
 
 let laps = [];
@@ -92,4 +93,11 @@ $lapResetBtn.addEventListener('click', () => {
     $laps.innerText = '';
     laps = [];
   }
+});
+
+// 5. 키보드 조작 기능
+document.addEventListener('keydown', (e) => {
+  const key = e.code;
+  if (key === 'KeyL') $lapResetBtn.click();
+  else if (key === 'KeyS') $startStopBtn.click();
 });
