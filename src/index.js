@@ -40,7 +40,7 @@ $startStopBtn.addEventListener('click', () => {
     switchClassNode($startStopBtn, 'bg-green-600', 'bg-red-600');
     stopWatch.start();
     interval = setInterval(() => {
-      $timer.innerText = stopWatch.centisecond;
+      $timer.innerText = formatCentisecond(stopWatch.centisecond);
     }, 10);
   } else {
     switchClassNode($startStopBtn, 'bg-red-600', 'bg-green-600');
@@ -48,3 +48,15 @@ $startStopBtn.addEventListener('click', () => {
     clearInterval(interval);
   }
 });
+
+// 2. 시간 포맷팅 구현
+const formatCentisecond = (centisecond) => {
+  let hour = parseInt(centisecond / 360000);
+  let minute = String(parseInt(centisecond / 6000)).padStart(2, 0);
+  let second = String(parseInt(centisecond / 100)).padStart(2, 0);
+  let rest = String(centisecond % 100).padStart(2, 0);
+
+  return hour
+    ? `${hour}:${minute}:${second}.${rest}`
+    : `${minute}:${second}.${rest}`;
+};
