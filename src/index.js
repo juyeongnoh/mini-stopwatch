@@ -40,11 +40,56 @@ $startStopBtn.addEventListener('click', () => {
     switchClassNode($startStopBtn, 'bg-green-600', 'bg-red-600');
     stopWatch.start();
     interval = setInterval(() => {
-      $timer.innerText = stopWatch.centisecond;
+      $timer.innerText = formatCentisecond(stopWatch.centisecond);
     }, 10);
   } else {
     switchClassNode($startStopBtn, 'bg-red-600', 'bg-green-600');
     stopWatch.pause();
     clearInterval(interval);
+  }
+});
+
+// 2. 시간 포맷팅 구현
+const formatCentisecond = (centisecond) => {
+  let hour = parseInt(centisecond / 360000);
+  let minute = String(parseInt(centisecond / 6000)).padStart(2, 0);
+  let second = String(parseInt(centisecond / 100)).padStart(2, 0);
+  let rest = String(centisecond % 100).padStart(2, 0);
+
+  return hour
+    ? `${hour}:${minute}:${second}.${rest}`
+    : `${minute}:${second}.${rest}`;
+};
+
+// 3. 랩 기능 구현
+const $laps = document.getElementById('laps');
+
+let laps = [];
+
+$lapResetBtn.addEventListener('click', () => {
+  if (isRunning) {
+    laps.push(stopWatch.createLap());
+    $laps.innerText = '';
+
+    for (let i = laps.length - 1; i >= 0; i--) {
+      const [lapCount, centisecond] = laps[i];
+      const $lap = document.createElement('li');
+      const $span1 = document.createElement('span');
+      const $span2 = document.createElement('span');
+
+      $lap.appendChild($span1);
+      $lap.appendChild($span2);
+
+      $lap.classList.value = 'flex justify-between py-2 px-3 border-b-2';
+      $span1.innerText = `랩 ${lapCount}`;
+      $span2.innerText = formatCentisecond(centisecond);
+
+      $laps.appendChild($lap);
+    }
+  } else {
+    stopWatch.reset();
+    $timer.innerText = formatCentisecond(stopWatch.centisecond);
+    $laps.innerText = '';
+    laps = [];
   }
 });
