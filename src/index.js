@@ -112,9 +112,13 @@ $lapResetBtn.addEventListener('click', () => {
       $lap.appendChild($span1);
       $lap.appendChild($span2);
 
-      $lap.classList.value = `flex justify-between py-2 px-3 border-b-2 ${
-        isLongest && 'text-red-600'
-      } ${isShortest && 'text-green-600'}`;
+      if (laps.length <= 1) {
+        $lap.classList.value = 'flex justify-between py-2 px-3 border-b-2';
+      } else {
+        $lap.classList.value = `flex justify-between py-2 px-3 border-b-2 ${
+          isLongest && 'text-red-600'
+        } ${isShortest && 'text-green-600'}`;
+      }
       $span1.innerText = `랩 ${lapCount}`;
       $span2.innerText = formatCentisecond(centisecond);
 
